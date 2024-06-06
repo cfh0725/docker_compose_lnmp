@@ -1,0 +1,35 @@
+name: dev_env
+
+services:
+  db:
+    image: mariadb
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: SHOW_ME_THE_DATA
+    volumes:
+      - ./mariadb/data:/var/lib/mysql
+
+  web:
+    image: nginx
+    ports:
+      - 80:80
+    working_dir: /srv
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./projects/:/srv
+
+  php83:
+    build:
+      context: ./php/83
+    working_dir: /srv/php83
+    volumes:
+      - ./projects/php83:/srv/php83
+
+  php74:
+    build:
+      context: ./php/74
+    working_dir: /srv/php74
+    volumes:
+      - ./projects/php74:/srv/php74
+
