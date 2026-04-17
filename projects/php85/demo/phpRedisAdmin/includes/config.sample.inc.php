@@ -33,7 +33,7 @@ $config = array(
       'charset'   => 'cp1251',      // Keys and values are stored in redis using this encoding (default utf-8).
       'keys'      => false,         // Use the old KEYS command instead of SCAN to fetch all keys for this server (default uses config default).
       'scansize'  => 1000,          // How many entries to fetch using each SCAN command for this server (default uses config default).
-      'scanmax'   => 1000,          // In each query, SCAN command may be executed several times. To shorten the duration, it is recommended to limit the total number of entries to fetch.
+      'scanmax'   => 1000,          // In each query, SCAN command may be executed several times. To shorten the duration, it is recommended to limit the total number of entries to fetch (default uses config default).
     ),*/
   ),
 
@@ -61,6 +61,12 @@ $config = array(
     )
   ),*/
 
+  // Uncomment to enable login as ACL authentication (won't work if 'login' or 'auth' is also used)
+  // Only support using one server at this moment.
+  // If you set the default user off, browsers will be redirected to login page.
+  // The user and password will be stored in browser as plaintext so using HTTPS is strongly recommended.
+  // 'login_as_acl_auth' => true,
+
   // Use HTML form/cookie-based auth instead of HTTP Basic/Digest auth
   'cookie_auth' => false,
 
@@ -84,5 +90,8 @@ $config = array(
   'keys' => false,
 
   // How many entries to fetch using each SCAN command.
-  'scansize' => 1000
+  'scansize' => 1000,
+
+  // The total number of entries to fetch. Set to 0 or -1 for no limit.
+  'scanmax' => 0
 );

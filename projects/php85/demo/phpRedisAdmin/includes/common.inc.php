@@ -96,7 +96,19 @@ if (!isset($server['keys'])) {
 }
 
 if (!isset($server['scansize'])) {
-  $server['scansize'] = $config['scansize'];
+  if (isset($config['scansize'])) {
+    $server['scansize'] = $config['scansize'];
+  } else {
+    $server['scansize'] = 1000;
+  }
+}
+
+if (!isset($server['scanmax'])) {
+  if (isset($config['scanmax'])) {
+    $server['scanmax'] = $config['scanmax'];
+  } else {
+    $server['scanmax'] = 0;
+  }
 }
 
 if (!isset($server['serialization'])) {
@@ -113,8 +125,8 @@ if (!isset($config['showEmptyNamespaceAsKey'])) {
   $config['showEmptyNamespaceAsKey'] = false;
 }
 
-if (!isset($config['scheme']) || empty($config['scheme'])) {
-  $config['scheme'] = 'tcp';
+if (!isset($server['scheme']) || empty($server['scheme'])) {
+  $server['scheme'] = 'tcp';
 }
 
 // Setup a connection to Redis.
@@ -136,6 +148,9 @@ if (isset($server['auth'])) {
   }
 }
 
+if (!isset($config['login']) && !empty($config['login_as_acl_auth'])) {
+  require_once PHPREDIS_ADMIN_PATH . '/includes/login_acl.inc.php';
+}
 
 if ($server['db'] != 0) {
   if (!$redis->select($server['db'])) {

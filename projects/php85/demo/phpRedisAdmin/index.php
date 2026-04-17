@@ -10,18 +10,14 @@ if($redis) {
     } else {
         $next = 0;
         $keys = array();
-
         while (true) {
             $r = $redis->scan($next, 'MATCH', $server['filter'], 'COUNT', $server['scansize']);
-
             $next = $r[0];
             $keys = array_merge($keys, $r[1]);
-
-            if (count($keys) >= $server['scanmax']) {
+            if ($next == 0) {
                 break;
             }
-
-            if ($next == 0) {
+            if ($server['scanmax'] > 0 && count($keys) >= $server['scanmax']) {
                 break;
             }
         }
@@ -86,7 +82,13 @@ if($redis) {
 
         // Get the number of items in the key.
         if (!isset($config['faster']) || !$config['faster']) {
-          switch ($redis->type($fullkey)) {
+          $type = '';
+          try {
+            $type = $redis->type($fullkey);
+          } catch (\Predis\Response\ServerException $th) {
+            $class[] = 'empty';
+          }
+          switch ($type) {
             case 'hash':
               $len = $redis->hLen($fullkey);
               break;
@@ -256,6 +258,9 @@ if ($databases > 1) { ?>
 </button>
 </div>
 <div id="keys">
+<div class="info">
+  scanned <?php echo count($keys) ?> keys<?php echo ($server['scanmax'] > 0 && count($keys) >= $server['scanmax']) ? ', reached scanmax' : '' ?>
+</div>
 <ul>
 <?php print_namespace($namespaces, 'Keys', '', empty($namespaces))?>
 </ul>

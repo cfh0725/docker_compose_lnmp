@@ -26,12 +26,12 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./projects/:/srv
 
-  php83:
+  php85:
     build:
-      context: ./php/83
-    working_dir: /srv/php83
+      context: ./php/85
+    working_dir: /srv/php85
     volumes:
-      - ./projects/php83:/srv/php83
+      - ./projects/php85:/srv/php85
 
   php74:
     build:

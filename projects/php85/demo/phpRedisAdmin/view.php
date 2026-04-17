@@ -17,8 +17,18 @@ if (!isset($_GET['key'])) {
   die;
 }
 
-$type   = $redis->type($_GET['key']);
-$exists = $redis->exists($_GET['key']);
+$type   = ''; 
+$exists = false;
+try {
+  $type   = $redis->type($_GET['key']);
+  $exists = $redis->exists($_GET['key']);
+} catch (\Predis\Response\ServerException $th) {
+  ?>
+  <div class="exception">
+    <h3><?php echo $th->getMessage() ?></h3>
+  </div>
+  <?php
+}
 
 $count_elements_page = isset($config['count_elements_page']) ? $config['count_elements_page'] : false;
 $page_num_request    = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -112,7 +122,7 @@ if (isset($values) && ($count_elements_page !== false)) {
 <?php 
 echo $size;
 
-if ($type === 'string') {
+if ($type == 'string') {
     echo " characters";
 } else if ($size < 0) {
     echo " (Type Unsupported)";
@@ -136,7 +146,7 @@ if (($count_elements_page !== false) && in_array($type, array('hash', 'list', 's
     $lpm1       = $lastpage - 1;
     $adjacents  = 3;
     $pagination = '<div style="width: inherit; word-wrap: break-word;">';
-    $url        = preg_replace('/&page=(\d+)/i', '', $_SERVER['REQUEST_URI']);
+    $url        = preg_replace('/&page=(\d+)/i', '', getRelativePath('view.php'));
 
     if ($page_num_request > 1) $pagination .= "<a href=\"$url&page=$prev\">&#8592;</a>&nbsp;"; else
         $pagination .= "&#8592;&nbsp;";
@@ -301,4 +311,3 @@ if (isset($pagination)) {
 }
 
 require 'includes/footer.inc.php';
-

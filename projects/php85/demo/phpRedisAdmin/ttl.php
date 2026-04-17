@@ -10,7 +10,7 @@ if (isset($_POST['key'], $_POST['ttl'])) {
     $redis->expire($_POST['key'], $_POST['ttl']);
   }
 
-  header('Location: view.php?key='.urlencode($_POST['key']));
+  header('Location: view.php?s=' . $server['id'] . '&d=' . $server['db'] . '&key=' . urlencode($_POST['key']));
   die;
 }
 
@@ -31,7 +31,7 @@ require 'includes/header.inc.php';
 
 <p>
 <label for="ttl"><abbr title="Time To Live">TTL</abbr>:</label>
-<input type="text" name="ttl" id="ttl" size="30" <?php echo isset($_GET['ttl']) ? 'value="'.format_html($_GET['ttl']).'"' : ''?>> <span class="info">(-1 to remove the TTL)</span>
+<input type="number" min="-1" name="ttl" id="ttl" size="30" <?php echo isset($_GET['ttl']) ? 'value="'.format_html($_GET['ttl']).'"' : ''?>> <span class="info">(-1 to remove the TTL)</span>
 </p>
 
 <input type="submit" class="button" value="Edit TTL">
